@@ -122,6 +122,7 @@ module.exports = {
                 if (error) {
                     return callBack(error);
                 }
+                console.log(results)
                 return callBack(null, results);
             }
         );
@@ -133,6 +134,18 @@ module.exports = {
                 if (error) {
                     callBack(error);
                 }
+                return callBack(null, results[0]);
+            }
+        );
+    },
+    getUsersCountByRoles: callBack =>{
+        pool.query(
+            `SELECT count(*) as count FROM userrolemap WHERE roleId = 2 OR roleId = 3 GROUP BY roleId`,
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error);
+                }
+                console.log(results);
                 return callBack(null, results[0]);
             }
         );
