@@ -30,7 +30,7 @@ module.exports = {
                     r.push(element+1);
                     roles.push(r);
                 });
-                if(data.userRole > 0){
+                if(roles.length > 0){
                     pool.query(
                         `INSERT INTO userrolemap (userId, roleId) values ?`,
                         [roles],
@@ -122,7 +122,6 @@ module.exports = {
                 if (error) {
                     return callBack(error);
                 }
-                console.log(results)
                 return callBack(null, results);
             }
         );
