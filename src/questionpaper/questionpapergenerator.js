@@ -11,7 +11,7 @@ const {
 } = require('./questionpaper.controller')
 
 const { questionPaperId } = require('../id_generator/idGenerator')
-const {romanToInt} = require('./conversion')
+const { romanToInt } = require('./conversion')
 
 module.exports = {
     generateQuestionPaper: (req, res) => {
@@ -28,7 +28,7 @@ module.exports = {
             };
             let modelpaper = JSON.parse(data);
             var id = questionPaperId();
-            var paper = reqQuery.type === "first internal" || reqQuery.type === "second internal" ? modelpaper.model[`scheme${reqQuery.scheme}`].internal : modelpaper.model[`scheme${reqQuery.scheme}`].external;
+            var paper = reqQuery.type === "first internal" || reqQuery.type === "second internal" ? modelpaper.model[`scheme20${reqQuery.scheme}`].internal : modelpaper.model[`scheme20${reqQuery.scheme}`].external;
 
             paper.paperId = reqQuery.type === "external" ? `${reqQuery.scheme.slice(-2)}${romanToInt(reqQuery.sem)} ${reqQuery.subjectType.toUpperCase()} ${reqQuery.subjectCode.slice(-2)}` : ""
             paper.id = id;
@@ -52,7 +52,7 @@ module.exports = {
         });
     },
 
-    generate: async (paper, reqQuery, callBack) => {
+    generate: async(paper, reqQuery, callBack) => {
         var header = paper.headerSection.headerDetails
         var sem = reqQuery.sem;
 
@@ -112,11 +112,11 @@ module.exports = {
                         qarray[`unit${i}`] = b;
                     }
                 }
-            
+
                 // return callBack(null,qarray);
                 let selectedQuestions = []
                 var unit = reqQuery.type === "first internal" ? 1 : reqQuery.type === "second internal" ? Math.ceil(totalUnits / 2) + 1 : 1;
-                
+
                 try {
                     for (let i = 0; i < paper.questionsSection.sections.length; i++) {
                         var section = paper.questionsSection.sections[i];
@@ -125,14 +125,13 @@ module.exports = {
                             for (let j = unit; j < section.count + unit; j++) {
                                 q = qarray[`unit${j}`][`${section.marks}marks`];
                                 let selectedQuestion = q[Math.floor(Math.random() * q.length)]
-                                if(selectedQuestion == null){
+                                if (selectedQuestion == null) {
                                     return callBack("cannot find questions");
                                 }
                                 marksquestions.push(selectedQuestion)
                                 selectedQuestions.push(selectedQuestion)
                             }
-                        }
-                        else if (section.type === "or") {
+                        } else if (section.type === "or") {
                             var mlist = section.marksList;
                             var smarks = section.marks;
                             for (let i = 0; i < 2; i++) {
@@ -144,18 +143,17 @@ module.exports = {
                                         if (next === 0 && qarray[`unit${unit}`][`${rmark}marks`].length > 0) {
                                             q = qarray[`unit${unit}`][`${rmark}marks`];
                                             var num = Math.floor(Math.random() * q.length);
-                                            if(q[num] == null){
+                                            if (q[num] == null) {
                                                 return callBack("cannot find questions");
                                             }
                                             sublist.push(q[num])
                                             q.splice(num, 1);
                                             break;
-                                        }
-                                        else if (next !== 0) {
+                                        } else if (next !== 0) {
                                             if (qarray[`unit${unit}`][`${rmark}marks`].length !== 0 && qarray[`unit${unit}`][`${next}marks`].length !== 0) {
                                                 q = qarray[`unit${unit}`][`${rmark}marks`];
                                                 var num = Math.floor(Math.random() * q.length)
-                                                if(q[num] == null){
+                                                if (q[num] == null) {
                                                     return callBack("cannot find questions");
                                                 }
                                                 sublist.push(q[num])
@@ -163,7 +161,7 @@ module.exports = {
 
                                                 q = qarray[`unit${unit}`][`${next}marks`];
                                                 num = Math.floor(Math.random() * q.length)
-                                                if(q[num] == null){
+                                                if (q[num] == null) {
                                                     return callBack("cannot find questions");
                                                 }
                                                 sublist.push(q[num])
@@ -177,7 +175,7 @@ module.exports = {
 
                                 }
                                 marksquestions.push(sublist);
-                                sublist.forEach((item)=>{
+                                sublist.forEach((item) => {
                                     selectedQuestions.push(item)
                                 })
                             }
@@ -189,11 +187,11 @@ module.exports = {
                     return callBack(error, null)
                 }
 
-                selectedQuestions = selectedQuestions.map((item)=>{
+                selectedQuestions = selectedQuestions.map((item) => {
                     return item ? item.questionId : null
                 })
 
-                updateQuestionCount(selectedQuestions,(error, results) => {
+                updateQuestionCount(selectedQuestions, (error, results) => {
                     if (error) {
                         return callBack(error);
                     }
